@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from bank import Bank
+from bank import Bank, compute_yealds
 
 def get_banks_data():
     list_of_banks = []
@@ -32,6 +32,9 @@ def get_banks_data():
             # Aggiungo il file prices.csv
             filename = 'Data/' + x + '/prices.csv'
             bank.prices = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0],date_parser=dateparser)
+
+            # Creo la lista dei rendimenti
+            bank.yealds = compute_yealds(bank)
 
             #Aggiungo l'oggetto banca alla lista di banche
             list_of_banks.append(bank)

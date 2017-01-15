@@ -7,11 +7,12 @@ banks = get_banks_data()
 for x in banks:
 
     #Stampa lista banche
-    if False:
+    if True:
         print(x.name)
         print(x.ticker)
         print(x.datas.head())
         print(x.prices.head())
+        print(x.yealds.head())
 
     #Fa il grafico del prezzo delle azioni
     if False:
@@ -23,7 +24,7 @@ for x in banks:
         plt.show()
 
     #Regressione
-    if True:
+    if False:
 
         y = x.prices['PX_LAST']
 
@@ -38,7 +39,7 @@ for x in banks:
 
         df = x.prices
         plt.plot(df['Date'], df['PX_LAST'], label="Sample")
-        plt.plot(df['Date'],predictions, label="Prediction")
+        plt.plot(df['Date'], predictions, label="Prediction")
         plt.title(x.name)
         plt.legend()
         plt.xlabel('Date')
