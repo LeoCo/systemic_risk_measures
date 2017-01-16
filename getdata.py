@@ -40,3 +40,4 @@ def get_banks_data():
             list_of_banks.append(bank)
 
     return list_of_banks
+

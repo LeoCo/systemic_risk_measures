@@ -1,13 +1,14 @@
 from getdata import get_banks_data
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
+import bank
 
 banks = get_banks_data()
 
 for x in banks:
 
     #Stampa lista banche
-    if True:
+    if False:
         print(x.name)
         print(x.ticker)
         print(x.datas.head())
@@ -18,6 +19,15 @@ for x in banks:
     if False:
         df = x.prices
         plt.plot(df['Date'], df['PX_LAST'])
+        plt.title(x.name)
+        plt.xlabel('Date')
+        plt.ylabel('Prices')
+        plt.show()
+
+    #Fa il grafico dei rendimenti
+    if False:
+        df = x.yealds
+        plt.plot(df['Date'], df['Yeald'])
         plt.title(x.name)
         plt.xlabel('Date')
         plt.ylabel('Prices')
@@ -47,3 +57,9 @@ for x in banks:
         plt.show()
 
 
+#Testo il metodo di ricerca in lista
+if True:
+
+    x = bank.find_ticker_in_list('ACA:FP',banks)
+
+    print(x.name)

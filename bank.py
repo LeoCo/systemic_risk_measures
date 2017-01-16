@@ -32,3 +32,13 @@ def compute_yealds(bank):
         price_yesterday = price_today
 
     return yealds
+
+def find_ticker_in_list(bank_ticker, list_of_banks):
+    for x in list_of_banks:
+        if x.ticker == bank_ticker:
+            return x
+
+def find_name_in_list(bank_name, list_of_banks):
+    for x in list_of_banks:
+        if x.name == bank_name:
+            return x
