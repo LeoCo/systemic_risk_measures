@@ -14,6 +14,7 @@ for x in banks:
         print(x.datas.head())
         print(x.prices.head())
         print(x.yealds.head())
+        print(type(x.yealds.iloc[0,0]))
 
     #Fa il grafico del prezzo delle azioni
     if False:
@@ -33,7 +34,7 @@ for x in banks:
         plt.ylabel('Prices')
         plt.show()
 
-    #Regressione
+    #Regressione prezzi
     if False:
 
         y = x.prices['PX_LAST']
@@ -44,6 +45,9 @@ for x in banks:
         model = sm.OLS(y, X)
         results = model.fit()
         print(results.summary())
+        print()
+        print('P values:')
+        print(results.pvalues)
 
         predictions = results.predict(X)
 
@@ -56,9 +60,40 @@ for x in banks:
         plt.ylabel('Prices')
         plt.show()
 
+    #Regressione Rendimenti
+    if True:
+        y = x.yealds['Yeald']
+
+        X = list(range(0, len(x.yealds['Yeald'])))
+        X = sm.add_constant(X)
+
+        print(y)
+        print(X[0])
+
+        print(type(y))
+        print(type(X[0]))
+
+        model = sm.OLS(y.astype(float), X.astype(float))
+        results = model.fit()
+        print(results.summary())
+        print()
+        print('P values:')
+        print(results.pvalues)
+
+        predictions = results.predict(X)
+
+        df = x.yealds
+        plt.plot(df['Date'], df['Yeald'], label="Sample")
+        plt.plot(df['Date'], predictions, label="Prediction")
+        plt.title(x.name)
+        plt.legend()
+        plt.xlabel('Date')
+        plt.ylabel('Yeald')
+        plt.show()
+
 
 #Testo il metodo di ricerca in lista
-if True:
+if False:
 
     x = bank.find_ticker_in_list('ACA:FP',banks)
 

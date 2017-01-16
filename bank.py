@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class Bank(object):
 
     def __init__(self, name='', ticker='', datas=pd.DataFrame(),prices=pd.DataFrame()):
@@ -8,13 +9,15 @@ class Bank(object):
         self.datas = datas
         self.prices = prices
 
-
 def compute_yealds(bank):
-    # Creao un df per i rendimenti
+
+
+    # Creo un df per i rendimenti
+
     dates = bank.prices['Date'][1:]
     columns = ['Date', 'Yeald']
     yealds = pd.DataFrame(dates, columns=columns)
-    # yealds['Yeald'] = 0
+
 
     # Calcolo i rendimenti
 
@@ -30,6 +33,7 @@ def compute_yealds(bank):
         yealds.loc[i + 1, 'Yeald'] = yeald
 
         price_yesterday = price_today
+
 
     return yealds
 
