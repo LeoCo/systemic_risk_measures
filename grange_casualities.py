@@ -1,9 +1,10 @@
 import pandas as pd
 import random
+import bank
 from getdata import get_banks_data
 
 
-def grange_casualties(banks):
+def granger_casualties(banks):
     banks_name = []
 
     #Creo la matrice delle correlazioni
@@ -14,20 +15,27 @@ def grange_casualties(banks):
 
     for x in corr_matrix.columns:
         for y in corr_matrix.index:
-            corr_matrix.loc[x,y] = correlation_a_to_b(x,y)
+
+            bank_a = bank.find_ticker_in_list(x,banks)
+            bank_b = bank.find_ticker_in_list(y,banks)
+
+            corr_matrix.loc[x,y] = correlation_a_granger_caused_by_b(bank_a,bank_b)
 
 
     return corr_matrix
 
-def correlation_a_to_b(a,b):
-    #mock
+def correlation_a_granger_caused_by_b(a,b):
 
-    return random.randint(0,1)
+    influenced = 0
+
+
+
+    return influenced
 
 if __name__ == '__main__':
 
     banks = get_banks_data()
 
-    grange_matrix = grange_casualties(banks)
+    granger_matrix = granger_casualties(banks)
 
-    print(grange_matrix)
+    print(granger_matrix)
