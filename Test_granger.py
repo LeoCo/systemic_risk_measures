@@ -13,3 +13,14 @@ if __name__ == '__main__':
     yeald_inner_join = pd.merge(yealds1, yealds2, on='Date', how='inner')
 
     print(yeald_inner_join[['Yeald_x','Yeald_y']])
+
+    print(yeald_inner_join.head())
+    print(yeald_inner_join.tail())
+
+    date_start = "2010-1-10"
+    date_end = "2011-1-1"
+
+    mask = (yeald_inner_join['Date'] > date_start) & (yeald_inner_join['Date'] <= date_end)
+    yeald_inner_join = yeald_inner_join.loc[mask]
+
+    print(yeald_inner_join.head())

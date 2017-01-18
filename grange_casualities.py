@@ -24,7 +24,7 @@ def granger_casualties(banks):
 
     return corr_matrix
 
-def correlation_a_granger_caused_by_b(a,b):
+def correlation_a_granger_caused_by_b(a, b, full_period=True, date_start="2010-1-1", date_end="2011-1-1",p_value=0.01):
 
     influenced = 0
 
@@ -34,13 +34,19 @@ def correlation_a_granger_caused_by_b(a,b):
 
     yeald_inner_join = pd.merge(yealds1, yealds2, on='Date', how='inner')
 
+    if full_period == False:
+        #Filtro solo le date che mi servono
+        mask = (yeald_inner_join['Date'] >= date_start) & (yeald_inner_join['Date'] <= date_end)
+        yeald_inner_join = yeald_inner_join.loc[mask]
+
+
     x = yeald_inner_join[['Yeald_x','Yeald_y']]
 
     granger_result = st.grangercausalitytests(x, 1,verbose=False)
 
     granger_pvalue = granger_result[1][0]['ssr_ftest'][1]
 
-    if granger_pvalue <= 0.01:
+    if granger_pvalue <= p_value:
         influenced = 1
 
     return influenced
