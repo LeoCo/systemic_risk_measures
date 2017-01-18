@@ -1,6 +1,6 @@
 import pandas as pd
-import random
 import bank
+import statsmodels.tsa.stattools as st
 from getdata import get_banks_data
 
 
@@ -28,7 +28,20 @@ def correlation_a_granger_caused_by_b(a,b):
 
     influenced = 0
 
+    yealds1 = a.yealds
 
+    yealds2 = b.yealds
+
+    yeald_inner_join = pd.merge(yealds1, yealds2, on='Date', how='inner')
+
+    x = yeald_inner_join[['Yeald_x','Yeald_y']]
+
+    granger_result = st.grangercausalitytests(x, 1,verbose=False)
+
+    granger_pvalue = granger_result[1][0]['ssr_ftest'][1]
+
+    if granger_pvalue <= 0.01:
+        influenced = 1
 
     return influenced
 
