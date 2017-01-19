@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     portfolio_system_return = pd.DataFrame(columns=['Year','Quarter','PSR'])
 
-    for year in range(year_start,year_end):
+    for year in range(year_start,year_end+1):
         for quarter in range(1,5):
 
             numerator = 0
@@ -28,12 +28,6 @@ if __name__ == '__main__':
             for bank in banks:
 
                 mask = (bank.mva['Year'] == year) & (bank.mva['Quarter'] == quarter)
-
-                #print("Bank name: " + bank.name)
-                #print(bank.mva.head())
-                #print(bank.mva['MVA'][mask])
-                #print(bank.mva[mask].empty)
-                #print('ok')
 
                 delta_mva = 0
                 mva = 0
