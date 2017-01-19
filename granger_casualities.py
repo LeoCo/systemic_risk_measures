@@ -65,6 +65,7 @@ if __name__ == '__main__':
 
     writer = pd.ExcelWriter('Output/granger_casualties_test.xlsx')
 
+    #2008 Crysis
     print('Granger Matrix of the 2008 crysis')
     date_start = '2006-9-15'
     date_end = '2008-9-15'
@@ -74,6 +75,15 @@ if __name__ == '__main__':
     sheet_title = str(date_start) + "_" + str(date_end)
     granger_matrix.to_excel(writer, sheet_title)
 
+    sheet_title = sheet_title + "_RANK"
+    granger_ranking = pd.DataFrame(granger_matrix.sum(axis=1), index=granger_matrix.index,
+                                   columns=['Number of Connections'])
+    granger_ranking.sort_values('Number of Connections', ascending=False, inplace=True)
+    granger_ranking.to_excel(writer, sheet_title)
+    #-------------------------------------------------------------------------------------------------------
+
+
+    #2012 Crysis
     print('Granger Matrix of the 2012 crysis')
     date_start = '2010-6-30'
     date_end = '2012-6-30'
@@ -83,12 +93,28 @@ if __name__ == '__main__':
     sheet_title = str(date_start) + "_" + str(date_end)
     granger_matrix.to_excel(writer, sheet_title)
 
+    sheet_title = sheet_title + "_RANK"
+    granger_ranking = pd.DataFrame(granger_matrix.sum(axis=1), index=granger_matrix.index,
+                                   columns=['Number of Connections'])
+    granger_ranking.sort_values('Number of Connections', ascending=False, inplace=True)
+    granger_ranking.to_excel(writer, sheet_title)
+    #-------------------------------------------------------------------------------------------------------
+
+
+    #Full Period
     print('Granger Matrix of the full available time period')
     granger_matrix = granger_casualties(banks)
     print(granger_matrix)
     print()
     sheet_title = "Full Period"
     granger_matrix.to_excel(writer, sheet_title)
+
+    sheet_title = "Full Period_RANK"
+    granger_ranking = pd.DataFrame(granger_matrix.sum(axis=1),index=granger_matrix.index,
+                                   columns=['Number of Connections'])
+    granger_ranking.sort_values('Number of Connections', ascending=False, inplace=True)
+    granger_ranking.to_excel(writer, sheet_title)
+    #-------------------------------------------------------------------------------------------------------
 
     writer.save()
 
