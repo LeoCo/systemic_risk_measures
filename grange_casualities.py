@@ -61,6 +61,8 @@ if __name__ == '__main__':
 
     banks = get_banks_data()
 
+    print("Get data time: " + str(time.clock() - start))
+
     writer = pd.ExcelWriter('Output/granger_casualties_test.xlsx')
 
     print('Granger Matrix of the 2008 crysis')
