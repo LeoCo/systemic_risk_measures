@@ -47,7 +47,7 @@ def compute_mva(bank):
 
     mva = datas.groupby(['Year', 'Quarter'], as_index=False).mean()
 
-    mva['MVA'] = mva['FNCL_LVRG'] * mva['TOT_COMMON_EQY']
+    mva['MVA'] = mva['FNCL_LVRG'] * mva['HISTORICAL_MARKET_CAP']
 
     mva = mva[['Year', 'Quarter', 'MVA']]
 
