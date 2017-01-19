@@ -2,6 +2,7 @@ import pandas as pd
 import bank
 import statsmodels.tsa.stattools as st
 from getdata import get_banks_data
+import time
 
 
 def granger_casualties(banks, full_period=True, date_start="", date_end=""):
@@ -56,6 +57,8 @@ def correlation_a_granger_caused_by_b(a, b, full_period=True, date_start="", dat
 
 if __name__ == '__main__':
 
+    start = time.clock()
+
     banks = get_banks_data()
 
     writer = pd.ExcelWriter('Output/granger_casualties_test.xlsx')
@@ -86,3 +89,7 @@ if __name__ == '__main__':
     granger_matrix.to_excel(writer, sheet_title)
 
     writer.save()
+
+    run_time = time.clock() - start
+
+    print("Execution time: " + str(run_time))
