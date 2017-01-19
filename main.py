@@ -61,7 +61,7 @@ for x in banks:
         plt.show()
 
     #Regressione Rendimenti
-    if True:
+    if False:
         y = x.yealds['Yeald']
 
         X = list(range(0, len(x.yealds['Yeald'])))
@@ -93,8 +93,10 @@ for x in banks:
 
 
 #Testo il metodo di ricerca in lista
-if False:
+if True:
 
     x = bank.find_ticker_in_list('ACA:FP',banks)
 
     print(x.name)
+    yealds = x.yealds
+    print(yealds['Date'])

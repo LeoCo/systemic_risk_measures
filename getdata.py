@@ -6,7 +6,8 @@ def get_banks_data():
     list_of_banks = []
 
     #Creo un covertitore di date
-    dateparser = lambda x: pd.datetime.strptime(x, '%d/%m/%y')
+    dateparser1 = lambda x: pd.datetime.strptime(x, '%d/%m/%y')
+    dateparser2 = lambda x: pd.datetime.strptime(x, '%Y-%m-%d')
 
     for x in os.listdir('./Data'):
 
@@ -27,20 +28,20 @@ def get_banks_data():
 
             # Aggiungo il file datas.csv
             filename = 'Data/' + x + '/datas.csv'
-            bank.datas = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0],date_parser=dateparser)
+            bank.datas = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0], date_parser=dateparser1)
 
             # Aggiungo il file prices.csv
             filename = 'Data/' + x + '/prices.csv'
-            bank.prices = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0],date_parser=dateparser)
+            bank.prices = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0], date_parser=dateparser1)
 
             #Creo la lista dei rendimenti se non esiste e la carico
             #altrimenti carico direttamente i rendimenti
             filename = 'Data/' + x + '/yealds.csv'
             if os.path.exists(filename):
-                bank.yealds = pd.read_csv(filename) #carica il file
+                bank.yealds = pd.read_csv(filename, parse_dates=[0], date_parser=dateparser2) #carica il file
             else:
                 bank.yealds = compute_yealds(bank)
-                bank.yealds.to_csv(filename)
+                bank.yealds.to_csv(filename,index=False)
 
 
 
