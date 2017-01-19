@@ -12,16 +12,14 @@ if __name__ == '__main__':
 
     print("Get data time: " + str(time.clock() - start))
 
-    year_start = 1997
-    quarter_start = 1
-
+    year_start = 2000
     year_end = 2015
-    quarter_end = 5
+
 
     portfolio_system_return = pd.DataFrame(columns=['Year','Quarter','PSR'])
 
     for year in range(year_start,year_end):
-        for quarter in range(quarter_start,quarter_end):
+        for quarter in range(1,5):
 
             numerator = 0
 
