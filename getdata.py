@@ -33,8 +33,16 @@ def get_banks_data():
             filename = 'Data/' + x + '/prices.csv'
             bank.prices = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0],date_parser=dateparser)
 
-            # Creo la lista dei rendimenti
-            bank.yealds = compute_yealds(bank)
+            #Creo la lista dei rendimenti se non esiste e la carico
+            #altrimenti carico direttamente i rendimenti
+            filename = 'Data/' + x + '/yealds.csv'
+            if os.path.exists(filename):
+                bank.yealds = pd.read_csv(filename) #carica il file
+            else:
+                bank.yealds = compute_yealds(bank)
+                bank.yealds.to_csv(filename)
+
+
 
             #Aggiungo l'oggetto banca alla lista di banche
             list_of_banks.append(bank)

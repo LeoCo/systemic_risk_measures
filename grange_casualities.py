@@ -63,6 +63,13 @@ if __name__ == '__main__':
 
     print("Get data time: " + str(time.clock() - start))
 
+    #Calcolo i rendimenti
+    #for x in banks:
+    #    x.yealds = bank.compute_yealds(x)
+
+
+    #print("Get data time: " + str(time.clock() - start))
+
     writer = pd.ExcelWriter('Output/granger_casualties_test.xlsx')
 
     print('Granger Matrix of the 2008 crysis')
