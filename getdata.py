@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from bank import Bank, compute_yealds
+from bank import Bank, compute_yealds, compute_mva
 
 def get_banks_data():
     list_of_banks = []
@@ -42,6 +42,15 @@ def get_banks_data():
             else:
                 bank.yealds = compute_yealds(bank)
                 bank.yealds.to_csv(filename,index=False)
+
+            #Creo MVA
+            #Se esiste lo carico
+            filename = 'Data/' + x + '/mva.csv'
+            if os.path.exists(filename):
+                bank.mva = pd.read_csv(filename)  # carica il file
+            else:
+                bank.mva = compute_mva(bank)
+                bank.mva.to_csv(filename, index=False)
 
 
 

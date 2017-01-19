@@ -37,6 +37,33 @@ def compute_yealds(bank):
 
     return yealds
 
+def compute_mva(bank):
+
+    datas = bank.datas
+
+    datas['Quarter'] = datas['Date'].dt.quarter
+
+    datas['Year'] = datas['Date'].dt.year
+
+    mva = datas.groupby(['Year', 'Quarter'], as_index=False).mean()
+
+    mva['MVA'] = mva['FNCL_LVRG'] * mva['TOT_COMMON_EQY']
+
+    mva = mva[['Year', 'Quarter', 'MVA']]
+
+    previous_mva = mva.loc[0, 'MVA']
+
+    for x in range(1, len(mva)):
+        current_mva = mva.loc[x, 'MVA']
+
+        mva.loc[x, 'DELTA_MVA'] = (current_mva - previous_mva) / previous_mva
+
+        previous_mva = current_mva
+
+    mva = mva.loc[1:, :]
+
+    return mva
+
 def find_ticker_in_list(bank_ticker, list_of_banks):
     for x in list_of_banks:
         if x.ticker == bank_ticker:
