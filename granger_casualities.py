@@ -14,6 +14,7 @@ def granger_casualties(banks, full_period=True, date_start="", date_end=""):
 
     corr_matrix = pd.DataFrame(index=banks_name, columns=banks_name)
 
+    #Senza thread
     for x in corr_matrix.index:
         for y in corr_matrix.columns:
 
@@ -22,6 +23,35 @@ def granger_casualties(banks, full_period=True, date_start="", date_end=""):
 
             corr_matrix.loc[x,y] = correlation_a_granger_caused_by_b(bank_a,bank_b,full_period=full_period, date_start=date_start, date_end=date_end)
 
+
+    '''
+    #Thread version
+    def correlation_for_thread(x, y, banks, full_period, date_start, date_end):
+
+        bank_a = bank.find_ticker_in_list(x, banks)
+        bank_b = bank.find_ticker_in_list(y, banks)
+
+        corr_matrix.loc[x, y] = correlation_a_granger_caused_by_b(bank_a, bank_b, full_period=full_period,
+                                                                  date_start=date_start, date_end=date_end)
+
+
+    thread_list = []
+
+
+    for x in corr_matrix.index:
+        for y in corr_matrix.columns:
+
+            args = [x, y, banks, full_period, date_start, date_end]
+
+            t = Thread(target=correlation_for_thread, args=args)
+
+            thread_list.append(t)
+
+            t.start()
+
+    for thread in thread_list:
+        thread.join()
+    '''
 
     return corr_matrix
 
