@@ -128,8 +128,7 @@ if __name__ == '__main__':
     X2 = X2[['V2X Index','SX5E Index','Spr_Liq_St','Incl_curv_rend','var_t-bill_3M']]
     X2.reset_index(drop=True, inplace=True)
 
-    print(X2)
-
+    #Inizializzo la matrice covar
     covar_matrix = pd.DataFrame(columns=['Ticker','Covar'])
 
     #Eseguo la regressione OLS per ogni banca
@@ -166,13 +165,14 @@ if __name__ == '__main__':
         #Memorizzo il covar
         covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'Covar': covar[0]}, ignore_index=True)
 
-
-
+    print()
+    print('Matrice Covar')
+    print('From first quarter of ' + str(year_from) + " to last quarter of " + str(year_to))
+    print()
     print(covar_matrix)
 
     sheet_name = "Covar_" + str(year_from) + "_to_" + str(year_to)
     covar_matrix.to_excel(writer, sheet_name)
-
 
     writer.save()
 
