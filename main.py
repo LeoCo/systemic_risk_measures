@@ -2,7 +2,8 @@ from getdata import get_banks_data, get_states_variable
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import bank
-from covar import covar
+import pandas as pd
+from covar import covar, portfolio_covar
 
 banks = get_banks_data()
 
@@ -110,18 +111,46 @@ if False:
     print(df.head())
 
 if True:
-    dates = [[2009,1,2011,4],
+    dates = [[2008,1,2010,4],
+             [2008,2,2011,1],
+             [2008,3,2011,2],
+             [2008,4,2011,3],
+             [2009,1,2011,4],
              [2009,2,2012,1],
-             [2009,3,2012,2]]
+             [2009,3,2012,2],
+             [2009,4,2012,3],
+             [2010,1,2012,4],
+             [2010,2,2013,1],]
 
     banks = get_banks_data()
 
     porfolio_covar_unc = []
     porfolio_covar = []
 
+    res = pd.DataFrame(columns=['Date','CovarUnc','Covar'])
+
     for d in dates:
         covar_unc_matrix, covar_matrix = covar(banks, d[0], d[1], d[2], d[3])
 
+        #porfolio_covar_unc.append(portfolio_covar(covar_unc_matrix, banks, d[2], d[3]))
+        #porfolio_covar.append(portfolio_covar(covar_matrix, banks, d[2], d[3]))
 
+        res = res.append({'Date': 'Q' + str(d[3]) + '-' + str(d[2]),
+                          'CovarUnc': portfolio_covar(covar_unc_matrix, banks, d[2], d[3]),
+                          'Covar': portfolio_covar(covar_matrix, banks, d[2], d[3])}, ignore_index=True)
+
+    #print(porfolio_covar_unc)
+    #print(porfolio_covar)
+
+    print(res)
+
+    plt.plot(res['CovarUnc'], label="Covar Unc")
+    plt.plot(res['Covar'], label="Covar")
+    plt.title('Portfolio Covar Trend')
+    plt.xticks(list(range(0,len(res))), res['Date'])
+    plt.legend()
+    plt.xlabel('Date')
+    plt.ylabel('Covar')
+    plt.show()
 
 
