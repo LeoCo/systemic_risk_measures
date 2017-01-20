@@ -129,7 +129,7 @@ if __name__ == '__main__':
     X2.reset_index(drop=True, inplace=True)
 
     #Inizializzo la matrice covar
-    covar_matrix = pd.DataFrame(columns=['Ticker','Covar'])
+    covar_matrix = pd.DataFrame(columns=['Ticker','Beta','COVAR','VAR_0.01','VAR_0.5','DELTA_COVAR'])
 
     #Eseguo la regressione OLS per ogni banca
     for b in banks:
@@ -149,6 +149,8 @@ if __name__ == '__main__':
             model = sm.OLS(y, X1_X2)
             results = model.fit()
 
+            print(results.summary())
+
             #Preparo X1 e X2 Predict
             X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
 
@@ -166,7 +168,12 @@ if __name__ == '__main__':
             covar = results.predict(X1_X2_pred)
 
             #Memorizzo il covar
-            covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'Covar': covar[0]}, ignore_index=True)
+            covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'COVAR': covar[0],
+                                                'Beta':results.params[b.ticker],
+                                                'VAR_0.01':X[b.ticker].quantile(q=0.01),
+                                                'VAR_0.5':X[b.ticker].quantile(q=0.5)}, ignore_index=True)
+
+    covar_matrix['DELTA_COVAR'] = covar_matrix['Beta'] * (covar_matrix['VAR_0.01'] - covar_matrix['VAR_0.5'])
 
     print()
     print('Matrice Covar')
