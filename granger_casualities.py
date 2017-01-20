@@ -113,10 +113,10 @@ if __name__ == '__main__':
     #-------------------------------------------------------------------------------------------------------
 
 
-    #2012 Crysis
+    #2011 Crysis
     print('Granger Matrix of the 2012 crysis')
-    date_start = '2010-6-30'
-    date_end = '2012-6-30'
+    date_start = '2009-1-1'
+    date_end = '2012-1-1'
     granger_matrix = granger_casualties(banks, full_period=False, date_start=date_start, date_end=date_end)
     print(granger_matrix)
     print()

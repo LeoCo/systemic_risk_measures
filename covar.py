@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 import statsmodels.api as sm
+from bank import find_ticker_in_list
 
 def portfolio_system_return(banks, year_start=2000,year_end=2015):
 
@@ -162,6 +163,28 @@ def covar(banks, year_from, quarter_from, year_to,quarter_to):
 
     return covar_unc_matrix, covar_matrix
 
+def portfolio_covar(covar_matrix, banks, year, quarter):
+
+    covar = covar_matrix.copy()
+
+    covar['Weighted'] = 0
+
+    mva_sum = 0
+
+    for ticker in covar['Ticker']:
+        bank = find_ticker_in_list(ticker,banks)
+        mask = (bank.mva['Year'] == year ) & ( bank.mva['Quarter'] == quarter)
+
+        mva = float(bank.mva[mask]['MVA'])
+
+        mva_sum += mva
+
+        covar.loc[covar['Ticker'] == ticker, 'Weighted'] = mva * covar.loc[covar['Ticker'] == ticker, 'COVAR']
+
+    portfolio_covar = covar['Weighted'].sum() / mva_sum
+
+    return portfolio_covar
+
 if __name__ == '__main__':
 
     start = time.clock()
@@ -172,15 +195,16 @@ if __name__ == '__main__':
 
     # Intervallo in quarters
     quarter_from = 1
-    year_from = 2008
+    year_from = 2009
 
     quarter_to = 4
-    year_to = 2010
+    year_to = 2011
 
     covar_unc_matrix, covar_matrix = covar(banks, year_from, quarter_from, year_to,quarter_to)
 
     print()
     print('Delta Covar Unconditional')
+    print('Portfolio Covar: ' + str(portfolio_covar(covar_unc_matrix, banks, year_from,quarter_to)))
     print('From quarter ' + str(quarter_from) +' of ' + str(year_from) + ' to quarter ' + str(quarter_to) +' of ' + str(year_to))
     print()
     print(covar_unc_matrix)
@@ -193,6 +217,7 @@ if __name__ == '__main__':
 
     print()
     print('Delta Covar')
+    print('Portfolio Covar: ' + str(portfolio_covar(covar_matrix, banks, year_from,quarter_to)))
     print('From quarter ' + str(quarter_from) +' of ' + str(year_from) + ' to quarter ' + str(quarter_to) +' of ' + str(year_to))
     print()
     print(covar_matrix)
