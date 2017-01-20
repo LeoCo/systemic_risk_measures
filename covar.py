@@ -149,8 +149,6 @@ if __name__ == '__main__':
             model = sm.OLS(y, X1_X2)
             results = model.fit()
 
-            print(results.summary())
-
             #Preparo X1 e X2 Predict
             X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
 
