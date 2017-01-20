@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     # Intervallo di anni
     year_from = 2009
-    year_to = 2012
+    year_to = 2011
 
     # Preparo il vettore y
     mask = (portfolio_system_return['Year'] >= year_from) & (portfolio_system_return['Year'] <= year_to)
