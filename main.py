@@ -1,4 +1,4 @@
-from getdata import get_banks_data
+from getdata import get_banks_data, get_states_variable
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import bank
@@ -93,10 +93,17 @@ for x in banks:
 
 
 #Testo il metodo di ricerca in lista
-if True:
+if False:
 
     x = bank.find_ticker_in_list('ACA:FP',banks)
 
     print(x.name)
     yealds = x.yealds
     print(yealds['Date'])
+
+#Testo il metodo get_states_variable()
+if True:
+
+    df = get_states_variable()
+
+    print(df)

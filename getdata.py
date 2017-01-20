@@ -59,3 +59,12 @@ def get_banks_data():
 
     return list_of_banks
 
+def get_states_variable():
+
+    #Creo un covertitore di date
+    dateparser1 = lambda x: pd.datetime.strptime(x, '%d/%m/%y')
+
+    filename = 'statesvariables.csv'
+    states_variable = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0], date_parser=dateparser1)
+
+    return states_variable
