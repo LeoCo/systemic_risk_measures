@@ -66,7 +66,7 @@ def covar(banks, year_from, year_to):
 
     # Eseguo la quantile regression per ogni banca
 
-    covar_unc_matrix = pd.DataFrame(columns=['Ticker', 'Beta', 'VAR_0.01', 'VAR_0.5'])
+    covar_unc_matrix = pd.DataFrame(columns=['Ticker', 'Beta', 'COVAR', 'VAR_0.01', 'VAR_0.5'])
 
     for b in banks:
 
@@ -79,12 +79,19 @@ def covar(banks, year_from, year_to):
 
             res = model.fit(q=0.01)
 
-            # print(res.summary())
+            x_pred = [1, X[b.ticker].quantile(q=0.01)]
+
+            # Calcolo il covar
+            covar = np.float(res.predict(x_pred))
 
             covar_unc_matrix = covar_unc_matrix.append(
                 {'Ticker': b.ticker, 'Beta': res.params[b.ticker],
+                 'COVAR': covar,
                  'VAR_0.01': X[b.ticker].quantile(q=0.01),
                  'VAR_0.5': X[b.ticker].quantile(q=0.5)}, ignore_index=True)
+
+
+
 
     # Calcolo il delta covar unconditional
     covar_unc_matrix['DELTA_COVAR_UNC'] = covar_unc_matrix['Beta'] * (
