@@ -107,10 +107,10 @@ def covar(banks, year_from, quarter_from, year_to,quarter_to):
     states_variables = get_states_variable()
 
     # Preparo la parte delle X con le variabili di sistema e la chiamo X2
-    mask = (psr['Year'] == year_from) & (psr['Quarter'] == quarter_from)
-    start_index = psr[mask].index[0]
-    mask = (psr['Year'] == year_to) & (psr['Quarter'] == quarter_to)
-    end_index = psr[mask].index[0]
+    mask = (states_variables['Year'] == year_from) & (states_variables['Quarter'] == quarter_from)
+    start_index = states_variables[mask].index[0]
+    mask = (states_variables['Year'] == year_to) & (states_variables['Quarter'] == quarter_to)
+    end_index = states_variables[mask].index[0]
     start_index -= 1
     X2 = states_variables.iloc[start_index:end_index]
     X2 = X2[['V2X Index', 'SX5E Index', 'Spr_Liq_St', 'Incl_curv_rend', 'var_t-bill_3M']]
@@ -171,11 +171,11 @@ if __name__ == '__main__':
     print("Get data time: " + str(time.clock() - start))
 
     # Intervallo in quarters
-    quarter_from = 2
-    year_from = 2009
+    quarter_from = 1
+    year_from = 2008
 
-    quarter_to = 3
-    year_to = 2012
+    quarter_to = 4
+    year_to = 2010
 
     covar_unc_matrix, covar_matrix = covar(banks, year_from, quarter_from, year_to,quarter_to)
 
