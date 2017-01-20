@@ -4,22 +4,15 @@ import numpy as np
 import time
 import statsmodels.api as sm
 
-if __name__ == '__main__':
-
-    start = time.clock()
-
-    banks = get_banks_data()
-
-    print("Get data time: " + str(time.clock() - start))
-
+def covar(banks, year_from, year_to):
     year_start = 2000
     year_end = 2015
 
-    #Calcolo il portfolio system return
-    portfolio_system_return = pd.DataFrame(columns=['Year','Quarter','PSR'])
+    # Calcolo il portfolio system return
+    portfolio_system_return = pd.DataFrame(columns=['Year', 'Quarter', 'PSR'])
 
-    for year in range(year_start,year_end+1):
-        for quarter in range(1,5):
+    for year in range(year_start, year_end + 1):
+        for quarter in range(1, 5):
 
             numerator = 0
 
@@ -43,18 +36,10 @@ if __name__ == '__main__':
 
                 denominator += mva
 
-
-
             current_portfolio_system_return = numerator / denominator
 
-            entry = pd.Series([year, quarter, current_portfolio_system_return], index=['Year','Quarter','PSR'])
+            entry = pd.Series([year, quarter, current_portfolio_system_return], index=['Year', 'Quarter', 'PSR'])
             portfolio_system_return = portfolio_system_return.append(entry, ignore_index=True)
-
-    print()
-    print('Portfolio System Return')
-    print()
-    print(portfolio_system_return)
-    print()
 
     # Calcolo i B di Xsys = a + B * X
 
@@ -68,22 +53,20 @@ if __name__ == '__main__':
     y.reset_index(drop=True, inplace=True)
     y.name = 'PSR'
 
-
-    #Preparo la matrice X
+    # Preparo la matrice X
     X = pd.DataFrame()
 
     for b in banks:
         mask = (b.mva['Year'] >= year_from) & (b.mva['Year'] <= year_to)
-        s = b.mva.loc[mask,'DELTA_MVA']
+        s = b.mva.loc[mask, 'DELTA_MVA']
         s.reset_index(drop=True, inplace=True)
         s.name = b.ticker
         X.reset_index(drop=True, inplace=True)
-        X = pd.concat([X, s],axis=1)
-
+        X = pd.concat([X, s], axis=1)
 
     # Eseguo la quantile regression per ogni banca
 
-    delta_covar_unconditional = pd.DataFrame(columns=['Ticker', 'Beta', 'VAR_0.01', 'VAR_0.5'])
+    covar_unc_matrix = pd.DataFrame(columns=['Ticker', 'Beta', 'VAR_0.01', 'VAR_0.5'])
 
     for b in banks:
 
@@ -92,65 +75,56 @@ if __name__ == '__main__':
         if not x.isnull().values.sum():
             x = sm.add_constant(x)
 
-            model = sm.QuantReg(y,x)
+            model = sm.QuantReg(y, x)
 
             res = model.fit(q=0.01)
 
-            #print(res.summary())
+            # print(res.summary())
 
-            delta_covar_unconditional = delta_covar_unconditional.append({'Ticker':b.ticker, 'Beta':res.params[b.ticker],
-                                                        'VAR_0.01':X[b.ticker].quantile(q=0.01),
-                                                        'VAR_0.5':X[b.ticker].quantile(q=0.5)}, ignore_index=True)
+            covar_unc_matrix = covar_unc_matrix.append(
+                {'Ticker': b.ticker, 'Beta': res.params[b.ticker],
+                 'VAR_0.01': X[b.ticker].quantile(q=0.01),
+                 'VAR_0.5': X[b.ticker].quantile(q=0.5)}, ignore_index=True)
 
-    #Calcolo il delta covar unconditional
-    delta_covar_unconditional['DELTA_COVAR_UNC'] = delta_covar_unconditional['Beta'] * (delta_covar_unconditional['VAR_0.01'] - delta_covar_unconditional['VAR_0.5'])
+    # Calcolo il delta covar unconditional
+    covar_unc_matrix['DELTA_COVAR_UNC'] = covar_unc_matrix['Beta'] * (
+    covar_unc_matrix['VAR_0.01'] - covar_unc_matrix['VAR_0.5'])
 
-    print()
-    print('Delta Covar Unconditional')
-    print('From first quarter of ' + str(year_from) + " to last quarter of " + str(year_to))
-    print()
-    print(delta_covar_unconditional)
-
-
-    writer = pd.ExcelWriter('Output/covar.xlsx')
-    sheet_name = "CovarUnc_" + str(year_from) + "_to_" + str(year_to)
-    delta_covar_unconditional.to_excel(writer, sheet_name)
-
-    #Carico le variabili di stato
+    # Carico le variabili di stato
     states_variables = get_states_variable()
 
-    #Preparo la parte delle X con le variabili di sistema e la chiamo X2
-    start_index = states_variables[(states_variables['Year'] == year_from) & (states_variables['Quarter'] == 1)].index[0]
+    # Preparo la parte delle X con le variabili di sistema e la chiamo X2
+    start_index = states_variables[(states_variables['Year'] == year_from) & (states_variables['Quarter'] == 1)].index[
+        0]
     start_index -= 1
     quarters = ((year_to + 1) - year_from) * 4
     end_index = start_index + quarters
     X2 = states_variables.iloc[start_index:end_index]
-    X2 = X2[['V2X Index','SX5E Index','Spr_Liq_St','Incl_curv_rend','var_t-bill_3M']]
+    X2 = X2[['V2X Index', 'SX5E Index', 'Spr_Liq_St', 'Incl_curv_rend', 'var_t-bill_3M']]
     X2.reset_index(drop=True, inplace=True)
 
-    #Inizializzo la matrice covar
-    covar_matrix = pd.DataFrame(columns=['Ticker','Beta','COVAR','VAR_0.01','VAR_0.5','DELTA_COVAR'])
+    # Inizializzo la matrice covar
+    covar_matrix = pd.DataFrame(columns=['Ticker', 'Beta', 'COVAR', 'VAR_0.01', 'VAR_0.5', 'DELTA_COVAR'])
 
-    #Eseguo la regressione OLS per ogni banca
+    # Eseguo la regressione OLS per ogni banca
     for b in banks:
 
         X1 = X[b.ticker]
 
         if not X1.isnull().values.sum():
+            # Preparo gli input per la regressione OLS, le y non cambiano
 
-            #Preparo gli input per la regressione OLS, le y non cambiano
+            # Preparo le X
 
-            #Preparo le X
-
-            X1_X2 = pd.concat([X1,X2],axis=1)
+            X1_X2 = pd.concat([X1, X2], axis=1)
             X1_X2 = sm.add_constant(X1_X2)
 
-            #Eseguo la regressione
+            # Eseguo la regressione
             model = sm.OLS(y, X1_X2)
             results = model.fit()
 
-            #Preparo X1 e X2 Predict
-            X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
+            # Preparo X1 e X2 Predict
+            X1_pred = pd.Series(X[b.ticker].quantile(q=0.01), name=b.ticker)
 
             X2_pred = X2.iloc[-1]
 
@@ -158,20 +132,50 @@ if __name__ == '__main__':
 
             X2_pred.reset_index(drop=True, inplace=True)
 
-            X1_X2_pred = pd.concat([X1_pred, X2_pred], axis=1,ignore_index=True)
+            X1_X2_pred = pd.concat([X1_pred, X2_pred], axis=1, ignore_index=True)
 
             X1_X2_pred = sm.add_constant(X1_X2_pred)
 
-            #Calcolo il covar
+            # Calcolo il covar
             covar = results.predict(X1_X2_pred)
 
-            #Memorizzo il covar
+            # Memorizzo il covar
             covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'COVAR': covar[0],
-                                                'Beta':results.params[b.ticker],
-                                                'VAR_0.01':X[b.ticker].quantile(q=0.01),
-                                                'VAR_0.5':X[b.ticker].quantile(q=0.5)}, ignore_index=True)
+                                                'Beta': results.params[b.ticker],
+                                                'VAR_0.01': X[b.ticker].quantile(q=0.01),
+                                                'VAR_0.5': X[b.ticker].quantile(q=0.5)}, ignore_index=True)
 
     covar_matrix['DELTA_COVAR'] = covar_matrix['Beta'] * (covar_matrix['VAR_0.01'] - covar_matrix['VAR_0.5'])
+
+    return covar_unc_matrix, covar_matrix
+
+
+
+if __name__ == '__main__':
+
+    start = time.clock()
+
+    banks = get_banks_data()
+
+    print("Get data time: " + str(time.clock() - start))
+
+    # Intervallo di anni
+    year_from = 2009
+    year_to = 2011
+
+    covar_unc_matrix, covar_matrix = covar(banks, year_from, year_to)
+
+    print()
+    print('Delta Covar Unconditional')
+    print('From first quarter of ' + str(year_from) + " to last quarter of " + str(year_to))
+    print()
+    print(covar_unc_matrix)
+
+
+    writer = pd.ExcelWriter('Output/covar.xlsx')
+    sheet_name = "CovarUnc_" + str(year_from) + "_to_" + str(year_to)
+    covar_unc_matrix.to_excel(writer, sheet_name)
+
 
     print()
     print('Matrice Covar')
