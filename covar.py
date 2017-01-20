@@ -52,6 +52,33 @@ if __name__ == '__main__':
 
     print(portfolio_system_return)
 
+    # Calcolo i B di Xsys = a + B * X
+
+    # Preparo il vettore y e la matrice X
+    year_from = 2010
+    year_to = 2012
+
+    mask = (portfolio_system_return['Year'] >= year_from) & (portfolio_system_return['Year'] <= year_to)
+    y = portfolio_system_return['PSR'][mask]
+    y.reset_index(drop=True, inplace=True)
+    y.name = 'PSR'
+
+    X = pd.DataFrame()
+
+    for b in banks:
+        mask = (b.mva['Year'] >= year_from) & (b.mva['Year'] <= year_to)
+        s = b.mva.loc[mask,'DELTA_MVA']
+        s.reset_index(drop=True, inplace=True)
+        s.name = b.ticker
+        X.reset_index(drop=True, inplace=True)
+        X = pd.concat([X, s],axis=1)
+
+    print(y)
+    print(X)
+
+    # Eseguo la quantile regression
+
+
 
     run_time = time.clock() - start
 
