@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
 
     writer = pd.ExcelWriter('Output/covar.xlsx')
-    sheet_name = "CovarUnc_" + str(year_from) + "_to_" + str(year_to)
+    sheet_name = "CovarUnc_Q" + str(quarter_from) + '-' + str(year_from) + "_to_Q" + str(quarter_to) + "-" + str(year_to)
     covar_unc_matrix.to_excel(writer, sheet_name)
 
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     print()
     print(covar_matrix)
 
-    sheet_name = "Covar_" + str(year_from) + "_to_" + str(year_to)
+    sheet_name = "Covar_Q" + str(quarter_from) + '-' + str(year_from) + "_to_Q" + str(quarter_to) + "-" + str(year_to)
     covar_matrix.to_excel(writer, sheet_name)
 
     writer.save()
