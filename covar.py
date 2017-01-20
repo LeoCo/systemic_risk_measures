@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # Calcolo i B di Xsys = a + B * X
 
     # Intervallo di anni
-    year_from = 2010
+    year_from = 2009
     year_to = 2012
 
     # Preparo il vettore y
@@ -134,36 +134,39 @@ if __name__ == '__main__':
     #Eseguo la regressione OLS per ogni banca
     for b in banks:
 
-        #Preparo gli input per la regressione OLS, le y non cambiano
-
-        #Preparo le X
         X1 = X[b.ticker]
 
-        X1_X2 = pd.concat([X1,X2],axis=1)
-        X1_X2 = sm.add_constant(X1_X2)
+        if not X1.isnull().values.sum():
 
-        #Eseguo la regressione
-        model = sm.OLS(y, X1_X2)
-        results = model.fit()
+            #Preparo gli input per la regressione OLS, le y non cambiano
 
-        #Preparo X1 e X2 Predict
-        X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
+            #Preparo le X
 
-        X2_pred = X2.iloc[-1]
+            X1_X2 = pd.concat([X1,X2],axis=1)
+            X1_X2 = sm.add_constant(X1_X2)
 
-        X2_pred = pd.DataFrame(X2_pred).transpose()
+            #Eseguo la regressione
+            model = sm.OLS(y, X1_X2)
+            results = model.fit()
 
-        X2_pred.reset_index(drop=True, inplace=True)
+            #Preparo X1 e X2 Predict
+            X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
 
-        X1_X2_pred = pd.concat([X1_pred, X2_pred], axis=1,ignore_index=True)
+            X2_pred = X2.iloc[-1]
 
-        X1_X2_pred = sm.add_constant(X1_X2_pred)
+            X2_pred = pd.DataFrame(X2_pred).transpose()
 
-        #Calcolo il covar
-        covar = results.predict(X1_X2_pred)
+            X2_pred.reset_index(drop=True, inplace=True)
 
-        #Memorizzo il covar
-        covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'Covar': covar[0]}, ignore_index=True)
+            X1_X2_pred = pd.concat([X1_pred, X2_pred], axis=1,ignore_index=True)
+
+            X1_X2_pred = sm.add_constant(X1_X2_pred)
+
+            #Calcolo il covar
+            covar = results.predict(X1_X2_pred)
+
+            #Memorizzo il covar
+            covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'Covar': covar[0]}, ignore_index=True)
 
     print()
     print('Matrice Covar')
