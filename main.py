@@ -102,8 +102,8 @@ if False:
     print(yealds['Date'])
 
 #Testo il metodo get_states_variable()
-if True:
+if False:
 
     df = get_states_variable()
 
-    print(df)
+    print(df.head())

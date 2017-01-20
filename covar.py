@@ -1,4 +1,4 @@
-from getdata import get_banks_data
+from getdata import get_banks_data, get_states_variable
 import pandas as pd
 import numpy as np
 import time
@@ -112,9 +112,68 @@ if __name__ == '__main__':
     print(delta_covar_unconditional)
 
 
-    writer = pd.ExcelWriter('Output/covar_unconditional.xlsx')
-    sheet_name = str(year_from) + "_to_" + str(year_to)
+    writer = pd.ExcelWriter('Output/covar.xlsx')
+    sheet_name = "CovarUnc_" + str(year_from) + "_to_" + str(year_to)
     delta_covar_unconditional.to_excel(writer, sheet_name)
+
+    #Carico le variabili di stato
+    states_variables = get_states_variable()
+
+    #Preparo la parte delle X con le variabili di sistema e la chiamo X2
+    start_index = states_variables[(states_variables['Year'] == year_from) & (states_variables['Quarter'] == 1)].index[0]
+    start_index -= 1
+    quarters = ((year_to + 1) - year_from) * 4
+    end_index = start_index + quarters
+    X2 = states_variables.iloc[start_index:end_index]
+    X2 = X2[['V2X Index','SX5E Index','Spr_Liq_St','Incl_curv_rend','var_t-bill_3M']]
+    X2.reset_index(drop=True, inplace=True)
+
+    print(X2)
+
+    covar_matrix = pd.DataFrame(columns=['Ticker','Covar'])
+
+    #Eseguo la regressione OLS per ogni banca
+    for b in banks:
+
+        #Preparo gli input per la regressione OLS, le y non cambiano
+
+        #Preparo le X
+        X1 = X[b.ticker]
+
+        X1_X2 = pd.concat([X1,X2],axis=1)
+        X1_X2 = sm.add_constant(X1_X2)
+
+        #Eseguo la regressione
+        model = sm.OLS(y, X1_X2)
+        results = model.fit()
+
+        #Preparo X1 e X2 Predict
+        X1_pred = pd.Series(X[b.ticker].quantile(q=0.01),name=b.ticker)
+
+        X2_pred = X2.iloc[-1]
+
+        X2_pred = pd.DataFrame(X2_pred).transpose()
+
+        X2_pred.reset_index(drop=True, inplace=True)
+
+        X1_X2_pred = pd.concat([X1_pred, X2_pred], axis=1,ignore_index=True)
+
+        X1_X2_pred = sm.add_constant(X1_X2_pred)
+
+        #Calcolo il covar
+        covar = results.predict(X1_X2_pred)
+
+        #Memorizzo il covar
+        covar_matrix = covar_matrix.append({'Ticker': b.ticker, 'Covar': covar[0]}, ignore_index=True)
+
+
+
+    print(covar_matrix)
+
+    sheet_name = "Covar_" + str(year_from) + "_to_" + str(year_to)
+    covar_matrix.to_excel(writer, sheet_name)
+
+
     writer.save()
 
     run_time = time.clock() - start

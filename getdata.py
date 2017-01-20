@@ -67,4 +67,11 @@ def get_states_variable():
     filename = 'statesvariables.csv'
     states_variable = pd.read_csv(filename, sep=';', decimal=',', parse_dates=[0], date_parser=dateparser1)
 
+    #Converto in trimestri
+    states_variable['Quarter'] = states_variable['Date'].dt.quarter
+
+    states_variable['Year'] = states_variable['Date'].dt.year
+
+    states_variable = states_variable.groupby(['Year', 'Quarter'], as_index=False).mean()
+
     return states_variable
