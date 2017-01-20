@@ -2,6 +2,7 @@ from getdata import get_banks_data, get_states_variable
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import bank
+from covar import covar
 
 banks = get_banks_data()
 
@@ -109,4 +110,18 @@ if False:
     print(df.head())
 
 if True:
-    a = 0
+    dates = [[2009,1,2011,4],
+             [2009,2,2012,1],
+             [2009,3,2012,2]]
+
+    banks = get_banks_data()
+
+    porfolio_covar_unc = []
+    porfolio_covar = []
+
+    for d in dates:
+        covar_unc_matrix, covar_matrix = covar(banks, d[0], d[1], d[2], d[3])
+
+
+
+
