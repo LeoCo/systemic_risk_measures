@@ -4,6 +4,7 @@ import statsmodels.api as sm
 import bank
 import pandas as pd
 from covar import covar, portfolio_covar
+from systemic_expected_shortfall import ses, portfolio_ses
 
 banks = get_banks_data()
 
@@ -110,7 +111,8 @@ if False:
 
     print(df.head())
 
-if True:
+#Plotto il grafico andamentale del portfolio covar
+if False:
     dates = [[2005, 3, 2007, 2],
              [2005, 4, 2007, 3],
              [2006, 1, 2007, 4],
@@ -137,9 +139,6 @@ if True:
 
     banks = get_banks_data()
 
-    porfolio_covar_unc = []
-    porfolio_covar = []
-
     res = pd.DataFrame(columns=['Date','CovarUnc','Covar'])
 
     for d in dates:
@@ -161,3 +160,40 @@ if True:
     plt.show()
 
 
+#Plotto il grafico andamentale del portfolio systemic expected shortfall
+if True:
+    dates = [['2007-01-01','2007-04-03',2007,1],
+             ['2007-04-03','2007-07-02',2007,2],
+             ['2007-07-03','2007-10-02',2007,3],
+             ['2007-10-03','2007-12-30',2007,4]]
+
+    banks = get_banks_data()
+
+
+    res = pd.DataFrame(columns=['Date','SES'])
+
+    for d in dates:
+        date_start = d[0]
+        date_end = d[1]
+
+        year_weight = d[2]
+        quarter_weight = d[3]
+
+        print(date_end)
+        data_matrix = ses(banks, date_start, date_end)
+        print(data_matrix)
+        porfolio_ses = portfolio_ses(data_matrix, banks, 2008, 3)
+        print(porfolio_ses)
+
+        res = res.append({'Date': date_end,
+                          'SES': porfolio_ses}, ignore_index=True)
+
+    print(res)
+
+    plt.plot(res['SES'], label="Covar Unc")
+    plt.title('Portfolio SES Trend')
+    plt.xticks(list(range(0,len(res))), res['Date'], rotation='vertical')
+    plt.legend()
+    plt.xlabel('Date')
+    plt.ylabel('SES')
+    plt.show()

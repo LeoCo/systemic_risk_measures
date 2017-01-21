@@ -10,13 +10,20 @@ def ses(banks, date_start, date_end):
 
     for b in banks:
 
-        # Controllo se ci siano i prezzi delle azioni
+        # Controllo che ci siano i prezzi delle azioni
         mask = (b.prices['Date'] >= date_start) & (b.prices['Date'] <= date_end)
         prices = b.prices.loc[mask]['PX_LAST']
 
-        condition = not prices.dropna().empty
+        condition1 = not prices.dropna().empty
 
-        if condition:
+        #Controllo che ci siano i valori nel leverage
+
+        mask = (b.datas['Date'] >= date_start) & (b.datas['Date'] <= date_end)
+        leverage = b.datas.loc[mask]['FNCL_LVRG']
+
+        condition2 = not leverage.dropna().empty
+
+        if condition1 and condition2:
             rses = 0
             mes = 0
             lvr = 0
