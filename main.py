@@ -210,7 +210,7 @@ if True:
         data_matrix = ses(banks, date_start, date_end)
 
         porfolio_ses = portfolio_ses(data_matrix, banks, 2008, 3)
-        res = res.append({'Date': date_end,
+        res = res.append({'Date': 'Q' + str(d[3]) + '-' + str(d[2]),
                           'SES': porfolio_ses}, ignore_index=True)
 
     print(res)
