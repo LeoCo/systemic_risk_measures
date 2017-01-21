@@ -120,7 +120,7 @@ if __name__ == '__main__':
     print()
     print(data_matrix)
 
-    writer = pd.ExcelWriter('Output/ses.xlsx')
+    writer = pd.ExcelWriter('Output/systemic_expected_shortfall.xlsx')
     sheet_name = "SES_" + date_start + '_to_' + date_end
     data_matrix.to_excel(writer, sheet_name)
     writer.save()
