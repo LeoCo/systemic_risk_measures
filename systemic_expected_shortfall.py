@@ -112,10 +112,19 @@ if __name__ == '__main__':
 
     data_matrix = ses(banks, date_start, date_end)
 
+    port_ses = portfolio_ses(data_matrix, banks, year_weight, quarter_weight)
+
+    print()
+    print('Systemic Expected Shortfall')
+    print('Portfolio ses: ' + str(port_ses))
+    print()
     print(data_matrix)
 
+    writer = pd.ExcelWriter('Output/ses.xlsx')
+    sheet_name = "SES_" + date_start + '_to_' + date_end
+    data_matrix.to_excel(writer, sheet_name)
+    writer.save()
 
-    port_ses = portfolio_ses(data_matrix,year_weight,quarter_weight)
+    run_time = time.clock() - start
 
-    print(port_ses)
-
+    print("Execution time: " + str(run_time))
