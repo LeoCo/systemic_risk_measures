@@ -215,7 +215,7 @@ if True:
 
     print(res)
 
-    plt.plot(res['SES'], label="Covar Unc")
+    plt.plot(res['SES'], label="SES")
     plt.title('Portfolio SES Trend')
     plt.xticks(list(range(0,len(res))), res['Date'], rotation='vertical')
     plt.legend()
