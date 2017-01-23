@@ -111,6 +111,8 @@ if __name__ == '__main__':
 
     banks = get_banks_data()
 
+    print("Get data time: " + str(time.clock() - start))
+
     date_start = '2006-09-15'
     date_end = '2008-09-15'
 
