@@ -46,7 +46,7 @@ dates = [[2005,1],
          [2012,3],
          [2012,4]]
 
-porfolio_delta_mva = pd.DataFrame(['Date'],['DELTA_MVA'])
+portfolio_delta_mva = pd.DataFrame(columns=['Date','DELTA_MVA'])
 
 #Primo elemento
 year = dates[0][0]
@@ -66,4 +66,7 @@ for b in banks:
 
 delta_mva = weighted_delta_mva / total_mva
 
-print(delta_mva)
+portfolio_delta_mva = portfolio_delta_mva.append({'Date': 'Q' + str(quarter) + '-' + str(year),
+                                                'DELTA_MVA': delta_mva}, ignore_index=True)
+
+print(portfolio_delta_mva)
