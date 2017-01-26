@@ -250,7 +250,8 @@ split_number = 15
 
 y_train = dataset[['DELTA_MVA']].iloc[:split_number]
 
-X_train = dataset[['SES','CovarUnc','Covar']].iloc[:split_number]
+X_train = dataset[['SES','CovarUnc','Covar','Average_Connection']].iloc[:split_number]
+X_train = sm.add_constant(X_train)
 
 print(y_train)
 
@@ -258,7 +259,8 @@ print(X_train)
 
 y_test = dataset[['DELTA_MVA']].iloc[split_number:]
 
-X_test = dataset[['SES','CovarUnc','Covar']].iloc[split_number:]
+X_test = dataset[['SES','CovarUnc','Covar','Average_Connection']].iloc[split_number:]
+X_test = sm.add_constant(X_test)
 
 print(y_test)
 
