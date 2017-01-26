@@ -5,6 +5,7 @@ import bank
 import pandas as pd
 from covar import covar, portfolio_covar
 from systemic_expected_shortfall import ses, portfolio_ses
+from granger_casualities import granger_casualties
 
 banks = get_banks_data()
 
@@ -161,7 +162,7 @@ if False:
 
 
 #Plotto il grafico andamentale del portfolio systemic expected shortfall
-if True:
+if False:
     dates = [['2005-01-01','2005-04-03',2005,1],
              ['2005-04-03','2005-07-02',2005,2],
              ['2005-07-04','2005-10-03',2005,3],
@@ -221,4 +222,41 @@ if True:
     plt.legend()
     plt.xlabel('Date')
     plt.ylabel('SES')
+    plt.show()
+
+#Plotto il grafico andamentale delle granger casualities
+if True:
+
+    dates = [['2011-07-03','2011-10-03',2011,3],
+             ['2012-04-03','2012-07-03',2012,2],
+             ['2012-07-03','2012-10-02',2012,3],
+             ['2012-10-03','2012-12-30',2012,4]]
+
+    average_connection = pd.DataFrame(columns=['Date','Average_Connection'])
+
+    for d in dates:
+        date_start = d[0]
+        date_end = d[1]
+
+        year_weight = d[2]
+        quarter_weight = d[3]
+
+        print(date_end)
+
+        granger_matrix = granger_casualties(banks, full_period=False, date_start=date_start, date_end=date_end)
+
+        granger_ranking = pd.DataFrame(granger_matrix.sum(axis=1), index=granger_matrix.index,
+                                       columns=['Number of Connections'])
+
+        average_connection = average_connection.append({'Date': 'Q' + str(d[3]) + '-' + str(d[2]),
+                                                        'Average_Connection': float(granger_ranking.mean())}, ignore_index=True)
+
+    print(average_connection)
+
+    plt.plot(average_connection['Average_Connection'], label="Average_Connection")
+    plt.title('Average Connection Trend')
+    plt.xticks(list(range(0,len(average_connection))), average_connection['Date'], rotation='vertical')
+    plt.legend()
+    plt.xlabel('Date')
+    plt.ylabel('Average_Connection')
     plt.show()
