@@ -5,6 +5,8 @@ from covar import covar, portfolio_covar
 from systemic_expected_shortfall import ses, portfolio_ses
 import time
 import matplotlib.pyplot as plt
+from granger_casualities import granger_casualties
+
 
 
 start = time.clock()
@@ -177,6 +179,56 @@ if False:
     dataset = pd.merge(dataset, res, on='Date')
 
     print(dataset)
+
+    #Preparo le granger casualities
+    dates = [['2007-07-03', '2007-10-02', 2007, 3],
+             ['2007-10-03', '2007-12-30', 2007, 4],
+             ['2008-01-01', '2008-04-03', 2008, 1],
+             ['2008-04-03', '2008-07-02', 2008, 2],
+             ['2008-07-03', '2008-10-02', 2008, 3],
+             ['2008-10-03', '2008-12-30', 2008, 4],
+             ['2009-01-01', '2009-04-03', 2009, 1],
+             ['2009-04-03', '2009-07-02', 2009, 2],
+             ['2009-07-04', '2009-10-03', 2009, 3],
+             ['2009-10-03', '2009-12-30', 2009, 4],
+             ['2010-01-01', '2010-04-03', 2010, 1],
+             ['2010-04-03', '2010-07-02', 2010, 2],
+             ['2010-07-03', '2010-10-02', 2010, 3],
+             ['2010-10-03', '2010-12-30', 2010, 4],
+             ['2011-01-01', '2011-04-03', 2011, 1],
+             ['2011-04-03', '2011-07-02', 2011, 2],
+             ['2011-07-03', '2011-10-03', 2011, 3],
+             ['2011-10-03', '2011-12-30', 2011, 4],
+             ['2012-01-01', '2012-04-03', 2012, 1],
+             ['2012-07-03', '2012-10-02', 2012, 2],
+             ['2012-07-03', '2012-10-02', 2012, 3],
+             ['2012-10-03', '2012-12-30', 2012, 4]]
+
+    average_connection = pd.DataFrame(columns=['Date', 'Average_Connection'])
+
+    for d in dates:
+        date_start = d[0]
+        date_end = d[1]
+
+        year_weight = d[2]
+        quarter_weight = d[3]
+
+        print(date_end)
+
+        granger_matrix = granger_casualties(banks, full_period=False, date_start=date_start, date_end=date_end)
+
+        granger_ranking = pd.DataFrame(granger_matrix.sum(axis=1), index=granger_matrix.index,
+                                       columns=['Number of Connections'])
+
+        average_connection = average_connection.append({'Date': 'Q' + str(d[3]) + '-' + str(d[2]),
+                                                        'Average_Connection': float(granger_ranking.mean())},
+                                                       ignore_index=True)
+
+
+    dataset = pd.merge(dataset, average_connection, on='Date')
+
+    print(average_connection)
+
 
     #Salvo in un file locale il dataset
     filename = 'dataset.csv'
