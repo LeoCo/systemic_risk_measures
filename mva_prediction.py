@@ -11,7 +11,7 @@ from granger_casualities import granger_casualties
 
 start = time.clock()
 
-#Aggiorno il file con i dati
+# "If True:" Aggiorno il file con i dati
 if False:
 
     #Carico il dataset delle banche
@@ -243,7 +243,7 @@ filename = 'dataset.csv'
 dataset = pd.read_csv(filename)
 print(dataset)
 
-#regressione
+#Regressione
 
 #Divido i dati in training set e test set
 split_number = 15
