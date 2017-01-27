@@ -11,7 +11,7 @@ from granger_casualities import granger_casualties
 
 start = time.clock()
 
-# "If True:" Aggiorno il file con i dati
+# "If True:" Aggiorno il dataset
 if False:
 
     #Carico il dataset delle banche
