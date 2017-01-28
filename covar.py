@@ -114,7 +114,7 @@ def covar(banks, year_from, quarter_from, year_to,quarter_to):
     end_index = states_variables[mask].index[0]
     start_index -= 1
     X2 = states_variables.iloc[start_index:end_index]
-    X2 = X2[['V2X Index', 'SX7P Index', 'Spr_Liq_St', 'Incl_curv_rend', 'var_t-bill_3M']]
+    X2 = X2[['V2X Index', 'SX7P Index', 'Spr_Liq_St', 'Incl_curv_rend', 'var_t-bill_3M','credit_spread']]
     X2.reset_index(drop=True, inplace=True)
 
     # Inizializzo la matrice covar
