@@ -6,6 +6,7 @@ from systemic_expected_shortfall import ses, portfolio_ses
 import time
 import matplotlib.pyplot as plt
 from granger_casualities import granger_casualties
+import numpy as np
 
 
 
@@ -243,6 +244,9 @@ filename = 'dataset.csv'
 dataset = pd.read_csv(filename)
 print(dataset)
 
+#Regressione quadratica?
+quadratic_reg = True
+
 #Regressione
 
 #Divido i dati in training set e test set
@@ -251,6 +255,13 @@ split_number = 15
 y_train = dataset[['DELTA_MVA']].iloc[:split_number]
 
 X_train = dataset[['SES','CovarUnc','Covar','Average_Connection']].iloc[:split_number]
+
+if quadratic_reg == True:
+    X_train['SES_sq'] = np.square(X_train['SES'])
+    X_train['CovarUnc_sq'] = np.square(X_train['CovarUnc'])
+    X_train['Covar_sq'] = np.square(X_train['Covar'])
+    X_train['Average_Connection_sq'] = np.square(X_train['Average_Connection'])
+
 X_train = sm.add_constant(X_train)
 
 print(y_train)
@@ -260,6 +271,13 @@ print(X_train)
 y_test = dataset[['DELTA_MVA']].iloc[split_number:]
 
 X_test = dataset[['SES','CovarUnc','Covar','Average_Connection']].iloc[split_number:]
+
+if quadratic_reg == True:
+    X_test['SES_sq'] = np.square(X_test['SES'])
+    X_test['CovarUnc_sq'] = np.square(X_test['CovarUnc'])
+    X_test['Covar_sq'] = np.square(X_test['Covar'])
+    X_test['Average_Connection_sq'] = np.square(X_test['Average_Connection'])
+
 X_test = sm.add_constant(X_test)
 
 print(y_test)
