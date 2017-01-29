@@ -41,7 +41,7 @@ def portfolio_system_return(banks, year_start=2000,year_end=2015):
 
     return portfolio_system_return
 
-def covar(banks, year_from, quarter_from, year_to,quarter_to):
+def covar(banks, year_from, quarter_from, year_to, quarter_to):
 
     #Calcolo il portfolio system return
     psr = portfolio_system_return(banks,year_start=2000,year_end=2015)
