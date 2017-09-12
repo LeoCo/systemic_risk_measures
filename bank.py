@@ -9,6 +9,9 @@ class Bank(object):
         self.datas = datas
         self.prices = prices
 
+    def __str__(self):
+        return "{}\t{}".format(self.ticker,self.name)
+
 def compute_yealds(bank):
 
 
