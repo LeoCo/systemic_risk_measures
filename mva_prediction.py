@@ -297,7 +297,7 @@ pred_matrix.loc[:,'Pred_DELTA_MVA'] = pd.Series(predictions, index=pred_matrix.i
 
 print(pred_matrix)
 
-#Plotto il grafico
+#Disegno il grafico
 
 plt.plot(dataset['DELTA_MVA'], label="Delta MVA")
 plt.plot(list(range(split_number, len(dataset))),pred_matrix['Pred_DELTA_MVA'], label="Pred Delta MVA",color='r')

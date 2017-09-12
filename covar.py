@@ -43,7 +43,7 @@ def portfolio_system_return(banks, year_start=2000,year_end=2015):
 
 def covar(banks, year_from, quarter_from, year_to, quarter_to):
 
-    #Calcolo il portfolio system return
+    # Calcolo il portfolio system return
     psr = portfolio_system_return(banks,year_start=2000,year_end=2015)
 
     # Calcolo i B di Xsys = a + B * X

@@ -12,7 +12,7 @@ class Bank(object):
 def compute_yealds(bank):
 
 
-    # Creo un df per i rendimenti
+    # Creo un dataframe per i rendimenti
 
     dates = bank.prices['Date'][1:]
     columns = ['Date', 'Yeald']
